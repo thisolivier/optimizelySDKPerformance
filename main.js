@@ -9,6 +9,7 @@ const TESTS = [
   { name: 'Decide (Live, unready)', file: 'decide-live-unready.js' },
   { name: 'Decide (Static, unready)', file: 'decide-static-unready.js' },
   { name: 'Decide (Polling, unready)', file: 'decide-static-stale-unready.js' },
+  { name: 'Decide (Sync, static)', file: 'decide-sync-static.js' }, // Eliminates 5ms loop time in other decide tests
 ];
 
 if (!fs.existsSync(resultsDir)) {
