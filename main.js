@@ -6,10 +6,10 @@ const TESTS = [
   { name: 'Fetch Datafile', file: 'fetch-datafile.js' },
   { name: 'Init SDK (Live)', file: 'init-sdk-live.js' },
   { name: 'Init SDK (Static)', file: 'init-sdk-static.js' },
-  { name: 'Decide (Live, unready)', file: 'decide-live-unready.js' },
-  { name: 'Decide (Static, unready)', file: 'decide-static-unready.js' },
-  { name: 'Decide (Polling, unready)', file: 'decide-static-stale-unready.js' },
-  { name: 'Decide (Sync, static)', file: 'decide-sync-static.js' }, // Eliminates 5ms loop time in other decide tests
+  { name: 'Decide (Live, looped requests)', file: 'decide-loop-sync-live.js' },
+  { name: 'Decide (Stale, looped requests)', file: 'decide-loop-sync-stale.js' },
+  { name: 'Decide (Static, looped requests)', file: 'decide-loop-sync-static.js' },
+  { name: 'Decide (Static, first request)', file: 'decide-sync-static.js' }, // Eliminates 5ms loop time in other decide tests
 ];
 
 if (!fs.existsSync(resultsDir)) {

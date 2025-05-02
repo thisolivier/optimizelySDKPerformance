@@ -84,6 +84,17 @@ function main() {
         analyzeFetchOrInit(file, summary);
       } else if (/^decisions-.*\.csv$/.test(file)) {
         analyzeDecisionFile(file, summary);
+      } else if (/^decide-sync-static\.csv$/.test(file)) {
+        const rows = parseCSV(path.join(resultsDir, file));
+        const totalTimes = rows.map(r => parseFloat(r[1]));
+        const decideTimes = rows.map(r => parseFloat(r[2]));
+        const validOnly = rows.filter(r => r[3] !== 'null').map(r => parseFloat(r[2]));
+        const invalidOnly = rows.filter(r => r[3] === 'null').map(r => parseFloat(r[2]));
+      
+        summarize(`${file} → Total time (init + decision)`, totalTimes, summary);
+        summarize(`${file} → Decision-only time`, decideTimes, summary);
+        summarize(`${file} → Valid decisions`, validOnly, summary);
+        summarize(`${file} → Invalid decisions`, invalidOnly, summary);
       } else {
         console.log(`⚠️  Skipping unknown file: ${file}`);
       }
