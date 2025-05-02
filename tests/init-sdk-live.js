@@ -1,20 +1,46 @@
 const fs = require('fs');
 const { performance } = require('perf_hooks');
 const optimizelySDK = require('@optimizely/optimizely-sdk');
-const { sdkKey, resultsDir } = require('../config');
+const { repeatCount, sdkKey, resultsDir } = require('../config');
 
-const start = performance.now();
+const RUNS = repeatCount;
+const outputFile = `${resultsDir}/init-live.csv`;
+let run = 0;
 
-const client = optimizelySDK.createInstance({ sdkKey });
+// Clean previous results
+if (fs.existsSync(outputFile)) {
+  console.log(`🧹 Removing old results file: ${outputFile}`);
+  fs.unlinkSync(outputFile);
+}
+fs.appendFileSync(outputFile, 'RunNumber,InitTime_ms\n');
 
-client.onReady({ timeout: 5000 }).then(() => {
-  const end = performance.now();
-  const elapsed = end - start;
-  console.log(`SDK (live) ready in ${elapsed.toFixed(3)} ms`);
+function runOnce() {
+  run++;
+  const start = performance.now();
+  const client = optimizelySDK.createInstance({ 
+    sdkKey,
+    datafileOptions: {
+      urlTemplate: `https://cdn.optimizely.com/datafiles/${sdkKey}.json?nocache=${Date.now()}`
+    } 
+  });
 
-  fs.writeFileSync(`${resultsDir}/init-live.csv`, `Time_ms\n${elapsed.toFixed(3)}\n`);
-  process.exit(0);
-}).catch(err => {
-  console.error(`SDK failed to initialize: ${err.message}`);
-  process.exit(1);
-});
+  client.onReady({ timeout: 5000 }).then(() => {
+    const end = performance.now();
+    const elapsed = end - start;
+
+    fs.appendFileSync(outputFile, `${run},${elapsed.toFixed(3)}\n`);
+    console.log(`🚀 Run ${run} - SDK (live) ready in ${elapsed.toFixed(3)} ms`);
+
+    if (run < RUNS) {
+      runOnce();
+    } else {
+      console.log(`🎉 Completed ${RUNS} live init runs.`);
+      process.exit(0);
+    }
+  }).catch(err => {
+    console.error(`❌ Init failed on run ${run}: ${err.message}`);
+    process.exit(1);
+  });
+}
+
+runOnce();

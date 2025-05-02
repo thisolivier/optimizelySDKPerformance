@@ -5,5 +5,6 @@ module.exports = {
   liveDatafileUrl: "https://cdn.optimizely.com/datafiles/5QdumosKsGvQST87iqPRf.json",
   staticDatafilePath: './datafile.json',
   staleDatafilePath: './datafile-stale.json',
-  resultsDir: './results'
+  resultsDir: './results',
+  repeatCount: 50
 };

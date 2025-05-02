@@ -22,4 +22,5 @@ for (const test of TESTS) {
   } catch (e) {
     console.error(`❌ Test "${test.name}" failed.\n`);
   }
+  console.log('--DONE--')
 }
